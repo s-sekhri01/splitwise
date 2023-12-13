@@ -56,9 +56,24 @@ public class TwoHeapStrategy implements SettleUpStrategy {
             Pair maxRecieve = maxHeapRecieve.poll();
 
             Transaction transaction = new Transaction();
-            transaction.setAmount(maxPay.getAmount());
-            transaction.setFrom(maxPay.getUser());
-            transaction.setTo(maxRecieve.getUser());
+
+            if (maxRecieve.getAmount() > maxPay.getAmount()) {
+                transaction.setAmount(maxPay.getAmount());
+                transaction.setFrom(maxPay.getUser());
+                transaction.setTo(maxRecieve.getUser());
+                Pair balance = new Pair(maxRecieve.getUser(), maxRecieve.getAmount() - maxPay.getAmount());
+                maxHeapRecieve.add(balance);
+            } else if (maxRecieve.getAmount() < maxPay.getAmount()) {
+                transaction.setAmount(maxRecieve.getAmount());
+                transaction.setFrom(maxPay.getUser());
+                transaction.setTo(maxRecieve.getUser());
+                Pair balance = new Pair(maxPay.getUser(), maxPay.getAmount() - maxRecieve.getAmount());
+                maxHeapPay.add(balance);
+            } else {
+                transaction.setAmount(maxPay.getAmount());
+                transaction.setFrom(maxPay.getUser());
+                transaction.setTo(maxRecieve.getUser());
+            }
 
             result.add(transaction);
         }
